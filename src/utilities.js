@@ -1,4 +1,4 @@
-export function retriever(endpoint, stateToChange, teamNum){
+export function retriever(endpoint, stateToChange, teamNum, callback){
   let theEndpoint;
   switch (endpoint) {
         case 'PL':
@@ -33,6 +33,7 @@ export function retriever(endpoint, stateToChange, teamNum){
             let placeholderObj = {};
             placeholderObj[stateToChange] = JSON.parse(httpRequest.responseText);
             self.setState(placeholderObj);
+            callback && callback();
 
           } else {
             console.log('There was a problem with the request.');
