@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import './bootstrap-grid.min.css';
-import './App.css';
 
-import {retriever, matchHeights} from './utilities.js';
+import {retriever, matchHeights} from '../../utilities.js';
 
 class Home extends Component {
 

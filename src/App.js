@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import './bootstrap-grid.min.css';
 import './App.css';
 
-import Home from './Home';
-import Teams from './Teams';
+import Home from './components/Home/Home.js';
+import Teams from './components/Teams/Teams.js';
 
 class App extends Component {
 

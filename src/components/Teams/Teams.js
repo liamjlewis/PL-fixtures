@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import './bootstrap-grid.min.css';
-import './App.css';
 
-import {retriever} from './utilities.js';
+import {retriever} from '../../utilities.js';
 
 class Teams extends Component {
 
@@ -97,7 +95,7 @@ class Teams extends Component {
                       {this.dateConvert(this.state.nextmatch.fixture.date)}
                   </div>
                   <div className="col-5">
-                      <img className="fixtures-img" src={this.state.nextmatch.homeTeam.crestURI} />
+                      <img className="fixtures-img" src={this.state.nextmatch.homeTeam.crestURI} alt={'the crest of '+this.state.nextmatch.homeTeam.teamName} />
                       <p>Position: {this.state.nextmatch.homeTeam.position}</p>
                       <p>Points: {this.state.nextmatch.homeTeam.points}</p>
                       <p>Home wins: {this.state.nextmatch.homeTeam.home.wins}</p>
@@ -106,7 +104,7 @@ class Teams extends Component {
                   </div>
                   <div className="vs col-2">Vs</div>
                   <div className="col-5">
-                      <img className="fixtures-img" src={this.state.nextmatch.awayTeam.crestURI} />
+                      <img className="fixtures-img" src={this.state.nextmatch.awayTeam.crestURI} alt={'the crest of '+this.state.nextmatch.awayTeam.teamName} />
                       <p>Position: {this.state.nextmatch.awayTeam.position}</p>
                       <p>Points: {this.state.nextmatch.awayTeam.points}</p>
                       <p>Away wins: {this.state.nextmatch.awayTeam.away.wins}</p>
