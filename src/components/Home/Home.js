@@ -1,42 +1,23 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
-
-import {retriever, matchHeights} from '../../utilities.js';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { requestData } from '../../logic/actions';
 
 class Home extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.retrieve = retriever.bind(this);
-
-    //set up the states
-    this.state = {
-      PLRoot: {},
-      teams: null
-    };
-  }
-
-  componentDidMount(){
-    this.retrieve('PL', 'PLRoot');
-    this.retrieve('teams', 'teams');
-
-    matchHeights('club-box');
-  }
-
-  componentUpdate(){
-    matchHeights('club-box');
-  }
-
-  render() {
-    return (
+  render(){
+      const { thePL, onRequestData, teams } = this.props;
+      return (
       <div>
+        <input type="button" value="request pl" onClick={() => onRequestData('pl')} />
+        <input type="button" value="request teams" onClick={() => onRequestData('teams')} />
         <h1 className="App-title">Premier League Fixtures</h1>
         <h3 className="black-header">
-          Match day {this.state.PLRoot.currentMatchday} of {this.state.PLRoot.numberOfMatchdays}.
+          Match day {thePL.currentMatchday} of {thePL.numberOfMatchdays}.
         </h3>
         <div className="row">
-          {(this.state.teams) && this.state.teams.teams.map(item => (
+          {(teams) && teams.teams.map(item => (
             <div key={item.code} className="club-box col-md-3">
               <div className="img-wrap">
               <Link to={item.shortName + '/' + item._links.self.href.split('/').pop()}>
@@ -48,15 +29,22 @@ class Home extends Component {
           ))}
         </div>
       </div>
-    );
-  }
-}
+    )};
+};
 
-export default Home;
+Home.propTypes = {
+  onRequestData: PropTypes.func.isRequired
+};
 
+const mapStateToProps = state => {
+  return { thePL: state.data.PL, teams: state.data.teams, };
+};
 
+const mapDispatchToProps = dispatch => ({
+  onRequestData: item => dispatch(requestData(item))
+});
 
-
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 
 
