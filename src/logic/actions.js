@@ -20,7 +20,7 @@ function receivedPosts(dataName, json) {
 export function requestData(dataName) {
 	return dispatch => {
 		dispatch(updateReqList(dataName))
-    return fetch(endpoints.pl)
+    return fetch(endpoints.PL, {headers: {'X-Auth-Token': '06fabd0fc83640c886c32345b88a6f54'}})
       .then(response => response.json())
       .then(json => dispatch(receivedPosts(dataName, json)))
   }

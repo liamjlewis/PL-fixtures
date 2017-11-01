@@ -10,7 +10,7 @@ class Home extends Component {
       const { thePL, onRequestData, teams } = this.props;
       return (
       <div>
-        <input type="button" value="request pl" onClick={() => onRequestData('pl')} />
+        <input type="button" value="request pl" onClick={() => onRequestData('PL')} />
         <input type="button" value="request teams" onClick={() => onRequestData('teams')} />
         <h1 className="App-title">Premier League Fixtures</h1>
         <h3 className="black-header">
