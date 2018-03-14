@@ -1,28 +1,66 @@
-import React, { Component } from 'react';
-
-import {retriever} from '../../utilities.js';
+import React, {Component} from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { requestData } from '../../logic/actions';
 
 class Teams extends Component {
 
-  constructor(props) {
+  constructor(props){
     super(props);
 
-    this.retrieve = retriever.bind(this);
     this.nextMatchInfo = this.nextMatchInfo.bind(this);
 
     //set up the states
     this.state = {
-      thisTeam: null,
-      fixtures: null,
+      teamNum: this.props.match.params.urlNum,
       nextmatch: null,
-      leagueTable: null
     };
+
   }
 
   componentDidMount(){
-    this.retrieve('table', 'leagueTable', null, this.nextMatchInfo);
+    /*this.retrieve('table', 'leagueTable', null, this.nextMatchInfo);
     this.retrieve('teamByNum', 'thisTeam', this.props.match.params.urlNum);
-    this.retrieve('teamFixtures', 'fixtures', this.props.match.params.urlNum, this.nextMatchInfo);
+    this.retrieve('teamFixtures', 'fixtures', this.props.match.params.urlNum, this.nextMatchInfo);*/
+    const { onRequestData } = this.props;
+    onRequestData('teamByNum', this.state.teamNum);
+    onRequestData('teamFixtures', this.state.teamNum);
+    onRequestData('table');
+  }
+
+  componentWillReceiveProps(nextProps){
+    //this.nextMatchInfo();
+    //console.log('•••••••••••••••• '+JSON.stringify(this.state.nextmatch));
+    
+    //find out if there have been any newly returned calls
+    var theOld = this.props.theCurrentRequests;
+    var theNew = nextProps.theCurrentRequests;
+
+    //Look for any items that existed but have been updated with a new timeStamp
+    var timeStampHasUpdated = theOld.filter(function(current){
+      let matches = theNew.filter(function(next){
+        return (
+          next.dataName === current.dataName 
+          && next.teamNum === current.teamNum 
+          && next.timeStamp !== current.timeStamp);
+      })
+      return matches.length;
+    });
+
+    //look for items the didn't previously exist
+    var newItems = theNew.filter(function(item){
+        var isFound = theOld.filter(function(oldItem){
+            return item.dataName === oldItem.dataName && item.teamNum === oldItem.teamNum;
+        })  
+      return isFound.length === 0; //return the items that were not found and therefore new
+    })
+
+    if(timeStampHasUpdated.length || newItems.length){
+      //do the thing, but maybe check for all three here
+      this.nextMatchInfo();
+    }
+
   }
 
   dateConvert(string){
@@ -30,45 +68,57 @@ class Teams extends Component {
     let m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
     return d.getDate()+'/'+m[d.getMonth()]+'/'+d.getFullYear();
   }
-
+  
   nextMatchInfo(){
-    if(this.state.fixtures && this.state.leagueTable){ //only fire if both AJAX promises have returned
 
-      let first = this.state.fixtures.fixtures.find(function(item){ //Get the next fixture
+    const { teamFixtures, table } = this.props;
+
+    if( teamFixtures && table){ //only fire if both AJAX promises have returned
+
+      let first = teamFixtures[this.state.teamNum].fixtures.find(function(item){ //Get the next fixture
         let x = false;
         (item.status !== 'FINISHED') && (x = true);
         return x;
       });
 
       //now we know our next fixture we need to get table info about both teams
-      let homeTeam = this.state.leagueTable.standing.find(function(item){
+      let homeTeam = table.standing.find(function(item){
         let x = false;
         (item.teamName === first.homeTeamName) && (x = true);
         return x;
       });
-      let awayTeam = this.state.leagueTable.standing.find(function(item){
+      let awayTeam = table.standing.find(function(item){
         let x = false;
         (item.teamName === first.awayTeamName) && (x = true);
         return x;
       });
-      
+      console.log('BOOM');
       this.setState({nextmatch: {
         fixture: first,
         homeTeam: homeTeam,
         awayTeam: awayTeam
       }});
+
     }
   }
-
+  
   render() {
+    const { teamByNum, teamFixtures, table, theCurrentRequests, onRequestData } = this.props;
     return (
+    
       <div className="container">
+      <input type="button" value="request pl" onClick={() => onRequestData('PL')} />
+        <input type="button" value="request teams" onClick={() => onRequestData('teams')} />
+        <input type="button" value="request teams57" onClick={() => onRequestData('teamByNum', 57)} />
+        <input type="button" value="request teams58" onClick={() => onRequestData('teamByNum', 58)} />
+        <input type="button" value="request teams59" onClick={() => onRequestData('teamByNum', 59)} />
+        <input type="button" value="request teams6969696969" onClick={() => onRequestData('teamByNum', 6969696969)} />
         <div className="row">
-          {this.state.thisTeam &&
+          {teamByNum &&
             <div className="col-12">
-              <h1>{this.state.thisTeam.name}</h1>
+              <h1>{teamByNum[this.state.teamNum].name}</h1>
               <div className="offset-5 col-md-2">
-                <img src={this.state.thisTeam.crestUrl} alt={'The logo of '+this.state.thisTeam.name}/>
+                <img src={teamByNum[this.state.teamNum].crestUrl} alt={'The logo of '+teamByNum[this.state.teamNum].name}/>
               </div>
             </div>
           }
@@ -76,7 +126,7 @@ class Teams extends Component {
         <div className="row">
           <div className="col-md-3">
             <h3 className="black-header">Upcoming Games</h3>
-            {(this.state.fixtures) && this.state.fixtures.fixtures.map(item => (
+            {(teamFixtures) && teamFixtures[this.state.teamNum].fixtures.map(item => (
               <div key={item.homeTeamName + 'vs' + item.awayTeamName} className="col-12">
                 {item.status !== 'FINISHED' && (
                   <p>
@@ -123,7 +173,27 @@ class Teams extends Component {
   }
 }
 
-export default Teams;
+Teams.propTypes = {
+  onRequestData: PropTypes.func.isRequired,
+  teamByNum: PropTypes.object,
+  teamFixtures: PropTypes.object,
+  table: PropTypes.object,
+};
+
+const mapStateToProps = state => {
+  return { 
+    teamByNum: state.data.teamByNum, 
+    teamFixtures: state.data.teamFixtures, 
+    table: state.data.table,
+    theCurrentRequests: state.requests.currentRequests,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onRequestData: (dataName, optNum) => dispatch(requestData(dataName, optNum))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Teams);
 
 
 

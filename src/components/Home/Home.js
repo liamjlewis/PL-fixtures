@@ -6,15 +6,24 @@ import { requestData } from '../../logic/actions';
 
 class Home extends Component {
 
+  componentDidMount(){
+    const { onRequestData } = this.props;
+    onRequestData('PL')
+    onRequestData('teams')
+  }
+
   render(){
       const { thePL, onRequestData, teams } = this.props;
       return (
       <div>
         <input type="button" value="request pl" onClick={() => onRequestData('PL')} />
         <input type="button" value="request teams" onClick={() => onRequestData('teams')} />
+        <input type="button" value="request teams" onClick={() => onRequestData('teamByNum', 57)} />
         <h1 className="App-title">Premier League Fixtures</h1>
         <h3 className="black-header">
-          Match day {thePL.currentMatchday} of {thePL.numberOfMatchdays}.
+          {(thePL) &&
+          'Match day '+thePL.currentMatchday+' of '+thePL.numberOfMatchdays+'.'
+          }
         </h3>
         <div className="row">
           {(teams) && teams.teams.map(item => (
@@ -41,7 +50,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onRequestData: item => dispatch(requestData(item))
+  onRequestData: (dataName, optNum) => dispatch(requestData(dataName, optNum))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
