@@ -14,10 +14,11 @@ const configureStore = (initialState = {}) => {
   return createStore(
     rootReducer,
     initialState,
-    applyMiddleware(
-      thunkMiddleware,
-      loggerMiddleware
-    )
+    composeEnhancers(
+      applyMiddleware(
+        thunkMiddleware,
+        loggerMiddleware
+      )),
   );
 };
 

@@ -1,4 +1,4 @@
-export const SUCCESSFUL_REQ_LIST = 'UPDATE_REQ_LIST';
+export const FETCHING_TOGGLE = 'FETCHING_TOGGLE';
 export const RECEIVED_POSTS = 'RECEIVED_POSTS';
 
 export const endpoints = { 

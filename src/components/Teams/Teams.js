@@ -29,38 +29,12 @@ class Teams extends Component {
     onRequestData('table');
   }
 
-  componentWillReceiveProps(nextProps){
-    //this.nextMatchInfo();
-    //console.log('•••••••••••••••• '+JSON.stringify(this.state.nextmatch));
-    
-    //find out if there have been any newly returned calls
-    var theOld = this.props.theCurrentRequests;
-    var theNew = nextProps.theCurrentRequests;
-
-    //Look for any items that existed but have been updated with a new timeStamp
-    var timeStampHasUpdated = theOld.filter(function(current){
-      let matches = theNew.filter(function(next){
-        return (
-          next.dataName === current.dataName 
-          && next.teamNum === current.teamNum 
-          && next.timeStamp !== current.timeStamp);
-      })
-      return matches.length;
-    });
-
-    //look for items the didn't previously exist
-    var newItems = theNew.filter(function(item){
-        var isFound = theOld.filter(function(oldItem){
-            return item.dataName === oldItem.dataName && item.teamNum === oldItem.teamNum;
-        })  
-      return isFound.length === 0; //return the items that were not found and therefore new
-    })
-
-    if(timeStampHasUpdated.length || newItems.length){
-      //do the thing, but maybe check for all three here
+  componentDidUpdate(prevProps){
+    const { serverActivity } = this.props;
+    if((prevProps.serverActivity.teamFixtures.isFetching === true && serverActivity.teamFixtures.isFetching === false) ||
+      (prevProps.serverActivity.table.isFetching === true && serverActivity.table.isFetching === false)) {
       this.nextMatchInfo();
     }
-
   }
 
   dateConvert(string){
@@ -73,9 +47,11 @@ class Teams extends Component {
 
     const { teamFixtures, table } = this.props;
 
-    if( teamFixtures && table){ //only fire if both AJAX promises have returned
+    //only fire if both AJAX promises have returned
+    if( teamFixtures && table){
 
-      let first = teamFixtures[this.state.teamNum].fixtures.find(function(item){ //Get the next fixture
+      //Get the next fixture
+      let first = teamFixtures[this.state.teamNum].fixtures.find(function(item){ 
         let x = false;
         (item.status !== 'FINISHED') && (x = true);
         return x;
@@ -92,7 +68,7 @@ class Teams extends Component {
         (item.teamName === first.awayTeamName) && (x = true);
         return x;
       });
-      console.log('BOOM');
+
       this.setState({nextmatch: {
         fixture: first,
         homeTeam: homeTeam,
@@ -103,18 +79,20 @@ class Teams extends Component {
   }
   
   render() {
-    const { teamByNum, teamFixtures, table, theCurrentRequests, onRequestData } = this.props;
+    const { teamByNum, teamFixtures, table, onRequestData } = this.props;
     return (
     
       <div className="container">
-      <input type="button" value="request pl" onClick={() => onRequestData('PL')} />
+        <input type="button" value="request pl" onClick={() => onRequestData('PL')} />
         <input type="button" value="request teams" onClick={() => onRequestData('teams')} />
         <input type="button" value="request teams57" onClick={() => onRequestData('teamByNum', 57)} />
         <input type="button" value="request teams58" onClick={() => onRequestData('teamByNum', 58)} />
         <input type="button" value="request teams59" onClick={() => onRequestData('teamByNum', 59)} />
-        <input type="button" value="request teams6969696969" onClick={() => onRequestData('teamByNum', 6969696969)} />
+        <input type="button" value="request teams1234567890" onClick={() => onRequestData('teamByNum', 1234567890)} />
+        <hr />
+        <button value="nextMatchInfo" onClick={ () => this.nextMatchInfo()} />
         <div className="row">
-          {teamByNum &&
+          {(teamByNum && teamByNum[this.state.teamNum]) &&
             <div className="col-12">
               <h1>{teamByNum[this.state.teamNum].name}</h1>
               <div className="offset-5 col-md-2">
@@ -185,7 +163,7 @@ const mapStateToProps = state => {
     teamByNum: state.data.teamByNum, 
     teamFixtures: state.data.teamFixtures, 
     table: state.data.table,
-    theCurrentRequests: state.requests.currentRequests,
+    serverActivity: state.serverActivity,
   };
 };
 
