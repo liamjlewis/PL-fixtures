@@ -8,8 +8,8 @@ import configureStore from './redux/store';
 import './bootstrap-grid.min.css';
 import './App.css';
 
-import Home from './components/Home/Home.js';
-import Teams from './components/Teams/Teams.js';
+import Home from './containers/Home/Home.js';
+import Teams from './containers/Teams/Teams.js';
 
 const store = configureStore();
 

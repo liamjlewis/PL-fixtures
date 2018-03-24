@@ -48,12 +48,12 @@ class Teams extends Component {
     const { teamFixtures, table } = this.props;
 
     //only fire if both AJAX promises have returned
-    if( teamFixtures && table){
+    if( teamFixtures && table && teamFixtures[this.state.teamNum]){
 
       //Get the next fixture
       let first = teamFixtures[this.state.teamNum].fixtures.find(function(item){ 
         let x = false;
-        (item.status !== 'FINISHED') && (x = true);
+        (item.status !== 'FINISHED' && item.status !== 'POSTPONED') && (x = true);
         return x;
       });
 
@@ -94,17 +94,17 @@ class Teams extends Component {
         <div className="row">
           {(teamByNum && teamByNum[this.state.teamNum]) &&
             <div className="col-12">
-              <h1>{teamByNum[this.state.teamNum].name}</h1>
               <div className="offset-5 col-md-2">
                 <img src={teamByNum[this.state.teamNum].crestUrl} alt={'The logo of '+teamByNum[this.state.teamNum].name}/>
               </div>
+              <h1>{teamByNum[this.state.teamNum].name}</h1>
             </div>
           }
         </div>
         <div className="row">
           <div className="col-md-3">
             <h3 className="black-header">Upcoming Games</h3>
-            {(teamFixtures) && teamFixtures[this.state.teamNum].fixtures.map(item => (
+            {(teamFixtures && teamFixtures[this.state.teamNum]) && teamFixtures[this.state.teamNum].fixtures.map(item => (
               <div key={item.homeTeamName + 'vs' + item.awayTeamName} className="col-12">
                 {item.status !== 'FINISHED' && (
                   <p>
