@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const CrestAndStats = ({ homeAndAway }) => (
-	<div>
+	<div className="crest-and-stats">
       <img className="fixtures-img" src={homeAndAway.crestURI} alt={'the crest of ' + homeAndAway.teamName} />
       <p>Position: {homeAndAway.position}</p>
       <p>Points: {homeAndAway.points}</p>

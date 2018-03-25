@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { requestData } from '../../logic/actions';
-import { dateConvert } from '../../utilities.js';
 import NextMatch from '../../components/NextMatch';
 import TeamFixtures from '../../components/TeamFixtures';
 

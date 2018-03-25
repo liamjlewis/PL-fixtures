@@ -29,7 +29,7 @@ class App extends Component {
                   </Link>
                 </header>
 
-                <Route path="/" exact={true} render={props => <Home {...{retriever: this.retriever}} {...props} />} />
+                <Route path="/" exact={true} render={props => <Home {...props} />} />
                 <Route path="/:urlRef/:urlNum" render={props => <Teams {...props} />} />
 
               </div>

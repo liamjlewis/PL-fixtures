@@ -9,7 +9,7 @@ const NextMatch = ({ theNextMatch }) => (
 	    <h3 className="black-header">Next Fixture</h3>
 	    <div className="row">
 	        <div className="col-12">
-	            {dateConvert(theNextMatch.fixture.date)}
+	            {dateConvert(theNextMatch.fixture.date, true)}
 	        </div>
 	        <div className="col-5">
 	        	<CrestAndStats homeAndAway={theNextMatch.homeTeam} />
