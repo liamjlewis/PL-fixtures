@@ -60,3 +60,9 @@ export function matchHeights(elementClass){
     }
   }
 }
+
+export function dateConvert(string){
+  let d = new Date(string);
+  let m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+  return d.getDate()+'/'+m[d.getMonth()]+'/'+d.getFullYear();
+}
